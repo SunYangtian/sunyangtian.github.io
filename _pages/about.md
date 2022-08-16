@@ -19,13 +19,24 @@ Work experience
 	* Research Intern
 	* Neural Radiance Field
 
- * **NetEase Game AI Lab, Hangzhou, China, (June 2022 - Now)** 
- 	* AI Engineer
+* **NetEase Game AI Lab, Hangzhou, China, (June 2022 - Now)**
+	* AI Engineer
 	* Neural Rendering
 
 Publications
 ======
-![avatar](images/profile.png) To be completed
+* **[NeRF-Editing: Geometry Editing of Neural Radiance Fields](http://geometrylearning.com/NeRFEditing/)**
+	* {Yu-Jie Yuan\*, **Yang-Tian Sun\***}, Yu-Kun Lai, Yuewen Ma, Rongfei Jia, Lin Gao
+	* IEEE Conference on Computer Vision and Pattern Recognition(**CVPR**), 2022
+
+* **[Robust Pose Transfer with Dynamic Details using Neural Video Rendering](https://arxiv.org/abs/2106.14132)**
+	* **Yang-Tian Sun**, Hao-Zhi Huang, Xuan Wang, Yu-Kun Lai, Wei Liu, Lin Gao
+	* IEEE Transactions on Pattern Analysis and Machine Intelligence(**TPAMI**), 2022
+
+* **[Human Motion Transfer with 3D Constraints and Detail Enhancement](https://arxiv.org/abs/2003.13510)**
+	* **Yang-Tian Sun**, Qian-Cheng Fu, Yue-Ren Jiang, Zitao Liu, Yu-Kun Lai, Hongbo Fu, Lin Gao
+	* IEEE Transactions on Pattern Analysis and Machine Intelligence(**TPAMI**), 2022
+
 
 Professional Services
 ======

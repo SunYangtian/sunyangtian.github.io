@@ -33,12 +33,12 @@ Publications
 * **[Robust Pose Transfer with Dynamic Details using Neural Video Rendering](https://arxiv.org/abs/2106.14132)**
 	* **Yang-Tian Sun**, Hao-Zhi Huang, Xuan Wang, Yu-Kun Lai, Wei Liu, Lin Gao
 	* IEEE Transactions on Pattern Analysis and Machine Intelligence(**TPAMI**), 2022
-	* [Paper](https://www.computer.org/csdl/journal/tp/5555/01/09756251/1CvQcJiYooM), [Code (comming soon)]()
+	* [Paper](https://ieeexplore.ieee.org/document/9756251), [Code (comming soon)]()
 
 * **[Human Motion Transfer with 3D Constraints and Detail Enhancement](https://arxiv.org/abs/2003.13510)**
 	* **Yang-Tian Sun**, Qian-Cheng Fu, Yue-Ren Jiang, Zitao Liu, Yu-Kun Lai, Hongbo Fu, Lin Gao
 	* IEEE Transactions on Pattern Analysis and Machine Intelligence(**TPAMI**), 2022
-	* [Paper](https://arxiv.org/abs/2003.13510), [Code (comming soon)]()
+	* [Paper](https://ieeexplore.ieee.org/document/9868156), [Code (comming soon)]()
 
 
 Professional Services

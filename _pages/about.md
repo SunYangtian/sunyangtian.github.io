@@ -45,5 +45,5 @@ Publications
 
 Professional Services
 ======
-AAAI-23 Program Committee Member
+* Program Committee (PC) Member for the Thirty-Seventh AAAI Conference on Artificial Intelligence (AAAI-23)
 

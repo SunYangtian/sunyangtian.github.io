@@ -9,7 +9,9 @@ redirect_from:
 ---
 I am Yang-Tian Sun, a master student graduated from [Institute of Computing Technology, Chinese Academy of Sciences](http://english.ict.cas.cn), supervised by Prof. [Lin Gao](http://www.geometrylearning.com).  Before that, I have received the bachelor's degree of science from [University of Science and Technology Beijing](https://en.ustb.edu.cn/) at 2019.
 
-My current research mainly focuses on neural rendering. Moreover, I'm also very interested in geometry processing, physical-based rendering. Welcome to contact me, the friends who like the intelligent graphics.
+My current research mainly focuses on neural rendering. Moreover, I'm also very interested in geometry processing, physical-based rendering. 
+
+**Welcome to contact me, the friends who like the intelligent graphics.**
 
 Work experience
 ======

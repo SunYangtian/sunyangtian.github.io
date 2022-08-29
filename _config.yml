@@ -81,7 +81,7 @@ analytics:
 # Site Author
 author:
   name             : "Yang-Tian Sun"
-  avatar           : "syt.JPG"
+  avatar           : "syt.jpg"
   bio              : "AI engineer in NetEase Game AI Lab\n sunyangtian98@gmail.com"
   location         : "Hangzhou, China"
   employer         :
@@ -115,6 +115,7 @@ author:
   xing             :
   youtube          :
   wikipedia        :
+  wechat           : SunYangtian
 
 
 # Reading Files

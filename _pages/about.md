@@ -23,7 +23,7 @@ Work experience
 * **Alibaba Taobao (Intern)**
 	<!-- Jun 2021 - Oct 2021 -->
 	<!-- <!-- * Research Intern -->
-	<!-- * Neural Radiance Field --> -->
+	<!-- * Neural Radiance Field -->
 
 * **NetEase Game AI Lab**
 	<!-- (June 2022 - Now) -->

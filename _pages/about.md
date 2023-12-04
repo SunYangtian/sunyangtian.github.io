@@ -15,17 +15,17 @@ My current research mainly focuses on neural rendering. Moreover, I'm also very 
 
 Work experience
 ======
-* **Tencent AI Lab, Shenzhen, China (Intern)**
+* **Tencent AI Lab (Intern)**
 	<!-- Jun 2020 - Mar 2021 -->
 	<!-- * Research Intern -->
 	<!-- * Digital Human Generation -->
 
-* **Alibaba Taobao, China (Intern)**
+* **Alibaba Taobao (Intern)**
 	<!-- Jun 2021 - Oct 2021 -->
-	<!-- * Research Intern
-	* Neural Radiance Field -->
+	<!-- <!-- * Research Intern -->
+	<!-- * Neural Radiance Field --> -->
 
-* **NetEase Game AI Lab, Hangzhou, China**
+* **NetEase Game AI Lab**
 	<!-- (June 2022 - Now) -->
 	<!-- * AI Engineer -->
 	<!-- * Neural Rendering -->

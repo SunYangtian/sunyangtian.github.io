@@ -7,25 +7,28 @@ redirect_from:
   - /about/
   - /about.html
 ---
-I am Yang-Tian Sun, a master student graduated from [Institute of Computing Technology, Chinese Academy of Sciences](http://english.ict.cas.cn), supervised by Prof. [Lin Gao](http://www.geometrylearning.com).  Before that, I have received the bachelor's degree of science from [University of Science and Technology Beijing](https://en.ustb.edu.cn/) at 2019.
+I am Yang-Tian Sun, a PhD student in the University of Hong Kong supervised by Prof. [Xiaojuan Qi](https://xjqi.github.io/). Before that, I got the master degree in [Institute of Computing Technology, Chinese Academy of Sciences](http://english.ict.cas.cn) supervised by Prof. [Lin Gao](http://www.geometrylearning.com) and the bachelor degree of science from [University of Science and Technology Beijing](https://en.ustb.edu.cn/).
 
 My current research mainly focuses on neural rendering. Moreover, I'm also very interested in geometry processing, physical-based rendering. 
 
-**Welcome to contact me, the friends who like the intelligent graphics.**
+<!-- **Welcome to contact me, the friends who like the intelligent graphics.** -->
 
 Work experience
 ======
-* **Tencent AI Lab, Shenzhen, China, (Jun 2020 - Mar 2021)**
-	* Research Intern
-	* Digital Human Generation
+* **Tencent AI Lab, Shenzhen, China (Intern)**
+	<!-- Jun 2020 - Mar 2021 -->
+	<!-- * Research Intern -->
+	<!-- * Digital Human Generation -->
 
-* **Alibaba Taobao, Hangzhou, China, (Jun 2021 - Oct 2021)**
-	* Research Intern
-	* Neural Radiance Field
+* **Alibaba Taobao, China (Intern)**
+	<!-- Jun 2021 - Oct 2021 -->
+	<!-- * Research Intern
+	* Neural Radiance Field -->
 
-* **NetEase Game AI Lab, Hangzhou, China, (June 2022 - Now)**
-	* AI Engineer
-	* Neural Rendering
+* **NetEase Game AI Lab, Hangzhou, China**
+	<!-- (June 2022 - Now) -->
+	<!-- * AI Engineer -->
+	<!-- * Neural Rendering -->
 
 Publications
 ======
@@ -45,7 +48,7 @@ Publications
 	* [Paper](https://ieeexplore.ieee.org/document/9868156), [Code](https://github.com/IGLICT/MT_DE-Jittor)
 
 
-Professional Services
+<!-- Professional Services
 ======
-* Program Committee (PC) Member for the Thirty-Seventh AAAI Conference on Artificial Intelligence (AAAI-23)
+* Program Committee (PC) Member for the Thirty-Seventh AAAI Conference on Artificial Intelligence (AAAI-23) -->
 

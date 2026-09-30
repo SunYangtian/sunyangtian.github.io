@@ -209,7 +209,8 @@ h2 {
 }
 
 .paper-links a { padding-block: 0.25rem; }
-.github-stars { width: 9.375rem; max-width: 100%; height: 1.25rem; border: 0; }
+.paper-links a.media-link svg { width: 0.82em; height: 0.82em; margin-right: 0.26em; vertical-align: -0.1em; }
+.github-stars { width: 7.5rem; max-width: 100%; height: 1.25rem; border: 0; }
 .paper-highlight {
   margin-top: 0.75rem;
   padding-left: 0.85rem;

@@ -153,6 +153,7 @@ h2 {
 }
 
 .publication-preview { display: block; margin-top: 0.25rem; }
+.publication-preview-stack { display: grid; gap: 0.4rem; }
 .publication-preview img {
   width: 100%;
   border: 1px solid var(--color-line);

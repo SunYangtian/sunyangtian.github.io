@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Yang-Tian Sun 的研究与面试介绍：视频生成、世界模型与生成式三维重建。">
+  <title>Yang-Tian Sun · 研究与面试介绍</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230b3289'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Arial' font-size='38' font-weight='bold' fill='white'%3ES%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="vendor/reveal/reveal.css">
+  <link rel="stylesheet" href="theme.css">
+</head>
+<body>
+  <div id="status" role="status">正在加载面试介绍…</div>
+  <main class="reveal" aria-label="面试展示"><div class="slides" id="slides"></div></main>
+  <nav class="toolbar" aria-label="展示控制" hidden>
+    <button id="menu-button" aria-haspopup="dialog">目录</button>
+    <span class="toolbar-divider"></span>
+    <button id="previous" aria-label="上一页">‹</button>
+    <span id="position" aria-live="polite">01 / 10</span>
+    <button id="next" aria-label="下一页">›</button>
+    <span class="toolbar-spacer"></span>
+    <button id="mode-button">阅读模式</button>
+    <button id="notes-button" title="演讲者备注（S）">备注</button>
+    <button id="fullscreen-button">全屏</button>
+  </nav>
+  <dialog id="chapter-menu" aria-labelledby="menu-title">
+    <header><h2 id="menu-title">章节目录</h2><button class="close-dialog" aria-label="关闭目录">关闭</button></header>
+    <ol id="chapter-list"></ol>
+  </dialog>
+  <dialog id="notes-dialog" aria-labelledby="notes-title">
+    <header><h2 id="notes-title">演讲者备注</h2><button class="close-dialog" aria-label="关闭备注">关闭</button></header>
+    <h3 id="notes-heading"></h3><div id="notes-copy"></div><div id="notes-sources"></div>
+    <button id="speaker-view">打开独立演讲者窗口</button>
+    <p class="notes-hint">共享屏幕时仅共享展示标签页，避免显示备注。</p>
+  </dialog>
+  <noscript>此展示需要启用 JavaScript。请在浏览器中启用后刷新。</noscript>
+  <script src="vendor/reveal/reveal.js"></script>
+  <script src="vendor/reveal/notes.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

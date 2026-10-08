@@ -123,16 +123,16 @@
         "detail": "相较论文中的单目生成后转换流程"
       },
       "media": {
-        "type": "image",
-        "src": "assets/stereo-world.gif",
-        "poster": "assets/stereo-world.png",
-        "alt": "Stereo World Model 生成的左右双目视图",
-        "caption": "同一场景的左右视图生成结果"
+        "type": "video",
+        "src": "assets/stereo-world-demo.mp4",
+        "poster": "assets/stereo-world-poster.jpg",
+        "alt": "双目生成、独立相机控制、立体深度与长序列生成演示",
+        "caption": "固定基线 / 独立相机控制 / 立体深度 / 长序列"
       },
       "links": [
         {
           "label": "项目演示",
-          "url": "https://sunyangtian.github.io/StereoWorld-web/"
+          "url": "https://vast-eden.ai/?p=stereo-world"
         },
         {
           "label": "论文",
@@ -142,7 +142,8 @@
       "notes": "StereoWorld 直接在 RGB 模态中联合生成双目视频，通过视差提供几何约束。联合相机帧 RoPE 支持相对视角与时间条件，注意力分解结合极线先验。速度数字对应论文中的单目生成后转换流程。",
       "sources": [
         "https://arxiv.org/abs/2603.17375",
-        "https://sunyangtian.github.io/"
+        "https://sunyangtian.github.io/",
+        "https://vast-eden.ai/?p=stereo-world"
       ],
       "repository": "stereo-world"
     },
@@ -153,7 +154,7 @@
       "visible": true,
       "eyebrow": "SELECTED RESEARCH / 02",
       "subtitle": "像素对齐的生成式三维场景重建",
-      "venue": "arXiv 2026 · 预印本",
+      "venue": "arXiv 2026",
       "authorship": "第一作者",
       "blocks": [
         {
@@ -175,16 +176,16 @@
         "detail": "相较 SAM3D 的相对提升"
       },
       "media": {
-        "type": "image",
-        "src": "assets/mira-scene.gif",
-        "poster": "assets/mira-scene.png",
-        "alt": "Mira-Scene 根据单张图片重建三维客厅场景",
-        "caption": "单图输入与三维场景重建"
+        "type": "video",
+        "src": "assets/mira-scene-demo.mp4",
+        "poster": "assets/mira-scene-poster.jpg",
+        "alt": "单图场景重建、场景重排、碰撞交互与机器人仿真应用演示",
+        "caption": "场景重建 / 场景重排 / 碰撞交互 / 机器人仿真应用"
       },
       "links": [
         {
           "label": "项目演示",
-          "url": "https://sunyangtian.github.io/Mira-Scene-web/"
+          "url": "https://vast-eden.ai/?p=mira-scene"
         },
         {
           "label": "论文",
@@ -193,7 +194,8 @@
       ],
       "notes": "Mira-Scene 把场景布局估计改写为规范空间中的稠密对应恢复。多模态扩散 Transformer 联合生成物体几何和规范坐标图，再进行鲁棒对齐。两个 IoU 数字为论文报告的相对提升，比较基线为 SAM3D。",
       "sources": [
-        "https://arxiv.org/abs/2609.23796"
+        "https://arxiv.org/abs/2609.23796",
+        "https://vast-eden.ai/?p=mira-scene"
       ],
       "repository": "mira-scene"
     },
@@ -204,7 +206,7 @@
       "visible": true,
       "eyebrow": "SELECTED RESEARCH / 03",
       "subtitle": "视频扩散模型中的一致几何估计",
-      "venue": "arXiv 2025 · 预印本",
+      "venue": "arXiv 2025",
       "authorship": "第一作者",
       "blocks": [
         {
@@ -221,11 +223,11 @@
         }
       ],
       "media": {
-        "type": "image",
-        "src": "assets/unigeo.gif",
-        "poster": "assets/unigeo.png",
-        "alt": "UniGeo 的输入视频、法线及坐标预测",
-        "caption": "输入视频 / 法线 / 坐标预测"
+        "type": "video",
+        "src": "assets/unigeo-demo.mp4",
+        "poster": "assets/unigeo-poster.jpg",
+        "alt": "UniGeo 静态和动态几何估计、长序列拼接与重建对比",
+        "caption": "静态几何 / 动态几何 / 长序列 / 重建对比"
       },
       "links": [
         {
@@ -255,23 +257,23 @@
           "meta": "NeurIPS 2024 · 第一作者",
           "description": "显式视频高斯表示支持跟踪、特征融合，以及运动与外观编辑。",
           "media": {
-            "type": "image",
-            "src": "assets/splatter-a-video.gif",
-            "poster": "assets/splatter-a-video.png",
-            "alt": "视频高斯表示的真实视频与重建结果"
+            "type": "video",
+            "src": "assets/splatter-a-video-demo.mp4",
+            "poster": "assets/splatter-a-video-poster.jpg",
+            "alt": "视频高斯表示、稠密跟踪、时序一致特征与几何和外观编辑演示"
           },
           "url": "https://sunyangtian.github.io/spatter_a_video_web/",
           "repository": "splatter"
         },
         {
           "title": "SC-GS",
-          "meta": "CVPR 2024 · 第一作者",
+          "meta": "CVPR 2024 · 共同第一作者",
           "description": "稀疏控制点驱动稠密高斯运动，支持动态重建与交互编辑。",
           "media": {
-            "type": "image",
-            "src": "assets/sc-gs.gif",
-            "poster": "assets/sc-gs.png",
-            "alt": "SC-GS 动态场景交互编辑演示"
+            "type": "video",
+            "src": "assets/sc-gs-demo.mp4",
+            "poster": "assets/sc-gs-poster.jpg",
+            "alt": "SC-GS 动态重建、控制点操作与真实场景和人物运动编辑演示"
           },
           "url": "https://yihua7.github.io/SC-GS-web/",
           "repository": "sc-gs"
@@ -302,12 +304,12 @@
         ],
         [
           "Mira-Scene",
-          "arXiv 2026 · 预印本",
+          "arXiv 2026",
           "第一作者"
         ],
         [
           "UniGeo",
-          "arXiv 2025 · 预印本",
+          "arXiv 2025",
           "第一作者"
         ],
         [
@@ -318,17 +320,46 @@
         [
           "SC-GS",
           "CVPR 2024",
-          "第一作者"
+          "共同第一作者"
         ],
         [
           "NeRF-Editing",
           "CVPR 2022",
+          "共同第一作者"
+        ],
+        [
+          "Robust Pose Transfer",
+          "TPAMI 2022",
+          "第一作者"
+        ],
+        [
+          "Human Motion Transfer",
+          "TPAMI 2022",
           "第一作者"
         ]
       ],
-      "notes": "论文使用短标题。Mira-Scene 和 Splatter a Video 在最新 PPT 表格中列为第一作者，项目页与官网注明共同一作，此处合并标注。GitHub stars 在页面加载时从官方仓库 API 动态读取，网络不可用时使用本地快照。3DGSR 的个人主页条目仅提供论文链接，暂未确认官方仓库，不展示未经核实的 star 数。完整题名和作者列表见个人主页。",
+      "notes": "论文使用短标题；SC-GS 与 NeRF-Editing 根据作者列表中的共同贡献标记为共同第一作者。点击标题打开项目主页；无主页的条目链接论文。所有论文均保留，GitHub stars 达到 100 时显示；网络不可用时使用本地快照。其他核心贡献的发表信息以项目主页、论文页面与出版记录为准，Google Scholar 用于完整论文列表索引。完整题名和作者列表见个人主页。",
       "sources": [
-        "https://sunyangtian.github.io/"
+        "https://sunyangtian.github.io/",
+        "https://scholar.google.com/citations?hl=en&user=a4GKTmsAAAAJ",
+        "https://vast-eden.ai/?p=stereo-world",
+        "https://vast-eden.ai/?p=mira-scene",
+        "https://sunyangtian.github.io/UniGeo-web/",
+        "https://sunyangtian.github.io/spatter_a_video_web/",
+        "https://yihua7.github.io/SC-GS-web/",
+        "http://geometrylearning.com/NeRFEditing/",
+        "https://arxiv.org/abs/2106.14132",
+        "https://arxiv.org/abs/2003.13510",
+        "https://anima-x.github.io/",
+        "https://yuanze1024.github.io/SeqTex/",
+        "https://yihua7.github.io/DRK-web/",
+        "https://ingra14m.github.io/Spec-Gaussian-website/",
+        "https://arxiv.org/abs/2404.00409",
+        "https://cvmi-lab.github.io/Total-Decom/",
+        "http://geometrylearning.com/InteractiveNeRFEditing/",
+        "https://fenghora.github.io/LaviGen-Page/",
+        "https://shawlyu.github.io/DyFN",
+        "https://arxiv.org/abs/2609.01172"
       ],
       "repositories": [
         "stereo-world",
@@ -336,31 +367,83 @@
         "unigeo",
         "splatter",
         "sc-gs",
-        "nerf"
+        "nerf",
+        "pose",
+        "motion"
       ],
       "extraProjects": [
         {
+          "title": "AnimaX",
+          "meta": "SIGGRAPH Asia 2025",
+          "url": "https://anima-x.github.io/"
+        },
+        {
+          "title": "SeqTex",
+          "meta": "SIGGRAPH Asia 2025",
+          "url": "https://yuanze1024.github.io/SeqTex/",
+          "repository": "seqtex"
+        },
+        {
           "title": "DRK",
           "meta": "CVPR 2025",
+          "url": "https://yihua7.github.io/DRK-web/",
           "repository": "drk"
         },
         {
           "title": "Spec-Gaussian",
           "meta": "NeurIPS 2024",
+          "url": "https://ingra14m.github.io/Spec-Gaussian-website/",
           "repository": "spec"
         },
         {
           "title": "3DGSR",
-          "meta": "SIGGRAPH Asia / TOG 2024"
+          "meta": "TOG 2024",
+          "url": "https://arxiv.org/abs/2404.00409"
+        },
+        {
+          "title": "Total-Decom",
+          "meta": "CVPR 2024",
+          "url": "https://cvmi-lab.github.io/Total-Decom/",
+          "repository": "total-decom"
+        },
+        {
+          "title": "Interactive NeRF Geometry Editing",
+          "meta": "TPAMI 2023",
+          "url": "http://geometrylearning.com/InteractiveNeRFEditing/"
+        },
+        {
+          "title": "LaviGen",
+          "meta": "arXiv 2026",
+          "url": "https://fenghora.github.io/LaviGen-Page/"
+        },
+        {
+          "title": "DyFN: Streaming Video Geometry",
+          "meta": "arXiv 2026",
+          "url": "https://shawlyu.github.io/DyFN"
+        },
+        {
+          "title": "Monocular Depth Estimation (Survey)",
+          "meta": "CVMJ 2026",
+          "url": "https://arxiv.org/abs/2609.01172"
         }
+      ],
+      "rowLinks": [
+        "https://vast-eden.ai/?p=stereo-world",
+        "https://vast-eden.ai/?p=mira-scene",
+        "https://sunyangtian.github.io/UniGeo-web/",
+        "https://sunyangtian.github.io/spatter_a_video_web/",
+        "https://yihua7.github.io/SC-GS-web/",
+        "http://geometrylearning.com/NeRFEditing/",
+        "https://arxiv.org/abs/2106.14132",
+        "https://arxiv.org/abs/2003.13510"
       ]
     },
     {
       "id": "expertise",
       "layout": "expertise",
-      "title": "研究能力与岗位方向",
+      "title": "研究能力、兴趣与岗位方向",
       "visible": true,
-      "eyebrow": "EXPERTISE",
+      "eyebrow": "EXPERTISE / RESEARCH INTERESTS",
       "items": [
         {
           "title": "视频生成与条件控制",
@@ -379,18 +462,11 @@
         }
       ],
       "footer": "目标岗位：世界模型 / 视频生成研究员、三维视觉算法工程师",
-      "notes": "我希望把已有的生成模型与三维几何研究积累用于企业科研和算法研发。可以围绕岗位需要，进一步展开条件建模、几何表示或可控编辑。",
+      "notes": "我希望把已有的生成模型与三维几何研究积累用于企业科研和算法研发。可以围绕岗位需要，进一步展开条件建模、几何表示或可控编辑。\n这两项是我当前的研究兴趣与探索方向。欢迎围绕世界模型、视频生成与三维视觉岗位继续交流。",
       "sources": [
         "https://sunyangtian.github.io/"
-      ]
-    },
-    {
-      "id": "outlook",
-      "layout": "outlook",
-      "title": "视觉理解与生成模型",
-      "visible": true,
-      "eyebrow": "RESEARCH INTERESTS",
-      "items": [
+      ],
+      "interests": [
         {
           "title": "视觉与语言智能结合",
           "description": "关注视觉理解如何支持 VA / VLA、具身智能与 Computer Use。"
@@ -400,11 +476,7 @@
           "description": "关注视频生成模型中的上下文学习与视觉智能。"
         }
       ],
-      "closing": "期待交流企业科研与视觉算法岗位机会",
-      "notes": "这两项是我当前的研究兴趣与探索方向。欢迎围绕世界模型、视频生成与三维视觉岗位继续交流。",
-      "sources": [
-        "https://sunyangtian.github.io/"
-      ]
+      "closing": "期待交流企业科研与视觉算法岗位机会"
     }
   ],
   "scholar": {
@@ -461,6 +533,16 @@
       "name": "ingra14m/Specular-Gaussians",
       "stars": 181,
       "url": "https://github.com/ingra14m/Specular-Gaussians"
+    },
+    "seqtex": {
+      "name": "VAST-AI-Research/SeqTex",
+      "stars": 48,
+      "url": "https://github.com/VAST-AI-Research/SeqTex"
+    },
+    "total-decom": {
+      "name": "CVMI-Lab/Total-Decom",
+      "stars": 63,
+      "url": "https://github.com/CVMI-Lab/Total-Decom"
     }
   }
 }

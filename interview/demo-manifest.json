@@ -1,0 +1,379 @@
+{
+  "version": 1,
+  "description": "Official project videos, sequenced at their original speed; all time values are seconds. Full clips end at the video stream boundary (audio is omitted). Panel coordinates refer to original source pixels.",
+  "output": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "crf": 21
+  },
+  "projects": {
+    "stereo-world": {
+      "title": "StereoWorld",
+      "homepage": "https://sunyangtian.github.io/StereoWorld-web/",
+      "poster_time": 2,
+      "clips": [
+        {
+          "url": "https://sunyangtian.github.io/StereoWorld-web/assets/stereo_video/varied_scene_004_lakeside_balcony_w_j_l_demo.mp4",
+          "start": 0,
+          "end": 5.0625,
+          "label": "固定双目相机生成",
+          "source_size": [
+            1664,
+            480
+          ],
+          "layout": "contain",
+          "sha256": "e558ea9ae39c35d86e1b7d46788337983f5ceb461148d821b06909a40103ba39"
+        },
+        {
+          "url": "https://sunyangtian.github.io/StereoWorld-web/assets/flex_demo/flex_converging_prompt_00117_demo.mp4",
+          "start": 0,
+          "end": 5.0625,
+          "label": "左右相机独立控制",
+          "source_size": [
+            1664,
+            480
+          ],
+          "layout": "contain",
+          "sha256": "6ccd2b5e74de372256769b5cb1756916b56e85e7281053dd4956ba145e8fae13"
+        },
+        {
+          "url": "https://sunyangtian.github.io/StereoWorld-web/assets/stereo_depth/stereo_video1_with_disp_vis1.mp4",
+          "start": 0,
+          "end": 3.0625,
+          "label": "立体深度",
+          "source_size": [
+            1920,
+            480
+          ],
+          "layout": "contain",
+          "sha256": "830a4e0ce5221008693c4d062b50f4b150bbcf1fde3c0a1d592f66d6b4043d98"
+        },
+        {
+          "url": "https://sunyangtian.github.io/StereoWorld-web/assets/ar_demo/custom_varied_021.mp4",
+          "start": 0,
+          "end": 9.5625,
+          "label": "自回归长序列 · 雪山道路",
+          "source_size": [
+            1664,
+            480
+          ],
+          "layout": "contain",
+          "sha256": "56951294e3b99dd9980aa140e50a32d968522acf5806ba4e763c66f1a05eb53b"
+        },
+        {
+          "url": "https://sunyangtian.github.io/StereoWorld-web/assets/ar_demo/custom_varied_022.mp4",
+          "start": 0,
+          "end": 9.5625,
+          "label": "自回归长序列 · 室内画廊",
+          "source_size": [
+            1664,
+            480
+          ],
+          "layout": "contain",
+          "sha256": "ad4d2d049e15b88511b1d428cdeb91de4faa1cde7f0adbc04eeccd29163244a1"
+        }
+      ]
+    },
+    "mira-scene": {
+      "title": "Mira-Scene",
+      "homepage": "https://sunyangtian.github.io/Mira-Scene-web/",
+      "poster_time": 4,
+      "clips": [
+        {
+          "url": "https://sunyangtian.github.io/Mira-Scene-web/assets/demo.mp4",
+          "start": 3.8,
+          "end": 15.1,
+          "label": "单图场景重建",
+          "source_size": [
+            1280,
+            720
+          ],
+          "layout": "contain",
+          "sha256": "76a7c148f6c43b6502e93f058914524e022d1dc3bd034d3ee85785f3e636905a"
+        },
+        {
+          "url": "https://sunyangtian.github.io/Mira-Scene-web/data/simulation/blender/sim2.mp4",
+          "start": 0,
+          "end": 4,
+          "label": "仿真应用 · 场景重排",
+          "source_size": [
+            1920,
+            1080
+          ],
+          "layout": "contain",
+          "sha256": "7ee4920d3c0429b6a108d2e126db626247c9b7a6231e8b475ac6ce9f42b3ae96"
+        },
+        {
+          "url": "https://sunyangtian.github.io/Mira-Scene-web/data/simulation/blender/sim4.mp4",
+          "start": 0,
+          "end": 5.6,
+          "label": "仿真应用 · 碰撞交互",
+          "source_size": [
+            1920,
+            1080
+          ],
+          "layout": "contain",
+          "sha256": "c145f2487001dde92cc94b6b18dd369ea8f1ccfd7be12865584fed305cec4f81"
+        },
+        {
+          "url": "https://sunyangtian.github.io/Mira-Scene-web/data/simulation/isaac/interaction3.mp4",
+          "start": 5,
+          "end": 20.133333,
+          "label": "仿真应用 · 机器人堆叠",
+          "source_size": [
+            1920,
+            1080
+          ],
+          "layout": "contain",
+          "sha256": "442a192ef7755b1e6498a5a89ee8e9a9e3b292224812cd55ce75a01fe03f495e"
+        }
+      ]
+    },
+    "unigeo": {
+      "title": "UniGeo",
+      "homepage": "https://sunyangtian.github.io/UniGeo-web/",
+      "poster_time": 2,
+      "clips": [
+        {
+          "url": "https://sunyangtian.github.io/UniGeo-web/materials/videos/video2.mp4",
+          "start": 0,
+          "end": 6.8,
+          "label": "静态场景几何",
+          "source_size": [
+            1648,
+            384
+          ],
+          "layout": "grid",
+          "sha256": "22d516bc9df4c4a3ace3c838a60e97f0f28f5d8f1a8cff4c48abc83e2fbc17f2",
+          "panels": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 516,
+              "height": 384
+            },
+            {
+              "x": 516,
+              "y": 0,
+              "width": 516,
+              "height": 384
+            },
+            {
+              "x": 1032,
+              "y": 0,
+              "width": 616,
+              "height": 384
+            }
+          ],
+          "empty_cell_label": "视频输入与几何估计\nRGB · 法向 · 深度"
+        },
+        {
+          "url": "https://sunyangtian.github.io/UniGeo-web/materials/videos/DAVIS/video_davis1.mp4",
+          "start": 0,
+          "end": 6.8,
+          "label": "动态人物几何",
+          "source_size": [
+            1648,
+            384
+          ],
+          "layout": "grid",
+          "sha256": "72f955df2860398de9bc17fd2b06f3db60864f2ec74e1d9ff2099d8824a34b8f",
+          "panels": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 516,
+              "height": 384
+            },
+            {
+              "x": 516,
+              "y": 0,
+              "width": 516,
+              "height": 384
+            },
+            {
+              "x": 1032,
+              "y": 0,
+              "width": 616,
+              "height": 384
+            }
+          ],
+          "empty_cell_label": "时序一致的动态几何\nRGB · 法向 · 深度"
+        },
+        {
+          "url": "https://sunyangtian.github.io/UniGeo-web/materials/videos/video_long1.mp4",
+          "start": 0,
+          "end": 10.0,
+          "label": "长序列拼接",
+          "source_size": [
+            2048,
+            384
+          ],
+          "layout": "grid",
+          "sha256": "b573e21453e92e899165fa5b814b473cdad6e11661498c054d174b9d963b39e2",
+          "panels": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 512,
+              "height": 384
+            },
+            {
+              "x": 512,
+              "y": 0,
+              "width": 512,
+              "height": 384
+            },
+            {
+              "x": 1024,
+              "y": 0,
+              "width": 512,
+              "height": 384
+            },
+            {
+              "x": 1536,
+              "y": 0,
+              "width": 512,
+              "height": 384
+            }
+          ]
+        },
+        {
+          "url": "https://sunyangtian.github.io/UniGeo-web/materials/videos/recon_compare.mp4",
+          "start": 0,
+          "end": 13.4,
+          "label": "重建对比",
+          "source_size": [
+            1920,
+            1080
+          ],
+          "layout": "contain",
+          "sha256": "b3f776ec400595ee0ae9bc7a57c8c3ee818233eb7db4dee59f19cf0f1a30570a"
+        }
+      ]
+    },
+    "splatter-a-video": {
+      "title": "Splatter a Video",
+      "homepage": "https://sunyangtian.github.io/spatter_a_video_web/",
+      "poster_time": 1.5,
+      "clips": [
+        {
+          "url": "https://sunyangtian.github.io/spatter_a_video_web/materials/videos/camera_space.mp4",
+          "start": 0,
+          "end": 7.235967,
+          "label": "视频高斯表示",
+          "source_size": [
+            1920,
+            1080
+          ],
+          "layout": "contain",
+          "sha256": "00408d0373aa0379b8d35076038b60d27665f4b2adf6deb7ac07de7a3827dbf0"
+        },
+        {
+          "url": "https://sunyangtian.github.io/spatter_a_video_web/materials/videos/tracking/horsejumping-high.mp4",
+          "start": 0,
+          "end": 3.333333,
+          "label": "稠密跟踪",
+          "source_size": [
+            864,
+            480
+          ],
+          "layout": "contain",
+          "sha256": "8d6a4657818521cfb2e987cf831cc379c876cf014da85ec321ffdf26e9e4ff28"
+        },
+        {
+          "url": "https://sunyangtian.github.io/spatter_a_video_web/materials/videos/consistent_feature.mp4",
+          "start": 0,
+          "end": 6.818967,
+          "label": "时序一致深度与特征",
+          "source_size": [
+            1920,
+            1080
+          ],
+          "layout": "contain",
+          "sha256": "7481009a37c4f32894de012b539aaa5a4ba86dd036c352e7257aeb85c9eb0e0d"
+        },
+        {
+          "url": "https://sunyangtian.github.io/spatter_a_video_web/materials/videos/geometry_editing.mp4",
+          "start": 0,
+          "end": 6.171967,
+          "label": "几何编辑",
+          "source_size": [
+            1920,
+            1080
+          ],
+          "layout": "contain",
+          "sha256": "abe7034843934d9012e21b16e849cb97bce0396446c9a6dbfa28e94516f0a04c"
+        },
+        {
+          "url": "https://sunyangtian.github.io/spatter_a_video_web/materials/videos/appearance_editing.mp4",
+          "start": 0,
+          "end": 6.4,
+          "label": "外观编辑",
+          "source_size": [
+            1920,
+            708
+          ],
+          "layout": "contain",
+          "sha256": "3f9f3323fb35f5ae96516bf31c9622776e14badb504645662eae25ea59975f34"
+        }
+      ]
+    },
+    "sc-gs": {
+      "title": "SC-GS",
+      "homepage": "https://yihua7.github.io/SC-GS-web/",
+      "poster_time": 8,
+      "clips": [
+        {
+          "url": "https://yihua7.github.io/SC-GS-web/materials/videos/jumpingjack.mp4",
+          "start": 0,
+          "end": 5.0,
+          "label": "动态重建",
+          "source_size": [
+            800,
+            800
+          ],
+          "layout": "contain",
+          "sha256": "c866599bcc1eb7c7e1f2135d4815475c46f126c2f3ade2085059075e1fcfad7d"
+        },
+        {
+          "url": "https://yihua7.github.io/SC-GS-web/materials/videos/interactiveGUI.mp4",
+          "start": 0,
+          "end": 31.8,
+          "label": "控制点交互操作",
+          "source_size": [
+            1920,
+            1080
+          ],
+          "layout": "contain",
+          "sha256": "ad1b5da1bc6eb1a8e2d96362b305ed2c89d471416dcf7abd8abe7f40258333e6"
+        },
+        {
+          "url": "https://yihua7.github.io/SC-GS-web/materials/Editing/hand5_motion_editing.mp4",
+          "start": 0,
+          "end": 3.0,
+          "label": "真实场景运动编辑",
+          "source_size": [
+            1440,
+            1440
+          ],
+          "layout": "contain",
+          "sha256": "4bd6a7729cb52f409a57c5bf67b03d33d563d47e8b099d72b1729b72f86b5efc"
+        },
+        {
+          "url": "https://yihua7.github.io/SC-GS-web/materials/Editing/edited_jumpingjacks.mp4",
+          "start": 0,
+          "end": 3.0,
+          "label": "人物运动编辑",
+          "source_size": [
+            1440,
+            1440
+          ],
+          "layout": "contain",
+          "sha256": "e1d32099c040ecdf810c924acf0fb3d812033c37b35821458e9d92ba2f2d84e4"
+        }
+      ]
+    }
+  }
+}

@@ -4,6 +4,7 @@
   const params = new URLSearchParams(location.search);
   const printMode = params.has('print-pdf');
   const readMode = !printMode && (params.get('view') === 'scroll' || (params.get('view') !== 'slides' && matchMedia('(max-width: 760px)').matches));
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   let data, chapters, deck, current = 0;
   const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text !== undefined) n.textContent = text; return n; };
   const append = (parent, ...children) => { children.filter(Boolean).forEach(c => parent.append(c)); return parent; };
@@ -22,7 +23,7 @@
       if (d.scholar) { url(d.scholar.url, 'scholar.url'); count(d.scholar.citations, 'scholar.citations'); }
       Object.entries(d.repositories || {}).forEach(([key, r]) => { requireText(r.name, `repositories.${key}.name`); url(r.url, `repositories.${key}.url`); count(r.stars, `repositories.${key}.stars`); });
     }
-    const repository = key => { if (key !== undefined && !d.repositories?.[key]) throw new Error(`找不到仓库：${key}`); };
+    const repository = key => { if (key !== undefined && key !== null && !d.repositories?.[key]) throw new Error(`找不到仓库：${key}`); };
     if (!Array.isArray(d.chapters) || !d.chapters.length) throw new Error('chapters 至少需要一个章节。');
     const ids = new Set(), layouts = ['cover','timeline','project','comparison','publications','expertise','outlook'];
     d.chapters.forEach((c, i) => {
@@ -43,7 +44,10 @@
       repository(c.repository);
       c.items?.forEach(v => repository(v.repository));
       if (c.repositories) { if (!Array.isArray(c.repositories) || c.repositories.length !== c.rows?.length) throw new Error(`${at}.repositories 必须与论文行数相同。`); c.repositories.forEach(repository); }
-      if (c.extraProjects) { if (!Array.isArray(c.extraProjects)) throw new Error(`${at}.extraProjects 应为数组。`); c.extraProjects.forEach(v => { requireText(v.title, 'extraProjects.title'); requireText(v.meta, 'extraProjects.meta'); repository(v.repository); }); }
+      if (c.extraProjects) { if (!Array.isArray(c.extraProjects)) throw new Error(`${at}.extraProjects 应为数组。`); c.extraProjects.forEach(v => { requireText(v?.title, 'extraProjects.title'); requireText(v.meta, 'extraProjects.meta'); repository(v.repository); if (v.url !== undefined) url(v.url, 'extraProjects.url'); }); }
+      if (c.rowLinks !== undefined) { if (!Array.isArray(c.rowLinks) || c.rowLinks.length !== c.rows?.length) throw new Error(`${at}.rowLinks 必须与论文行数相同。`); c.rowLinks.forEach((v,j) => { if (v !== null) url(v, `${at}.rowLinks[${j}]`); }); }
+      if (c.interests !== undefined) arr('interests', ['title','description']);
+      if (c.closing !== undefined) requireText(c.closing, `${at}.closing`);
       const media = (m, label) => { if (!m || !['image','video'].includes(m.type)) throw new Error(`${label}.type 应为 image 或 video。`); url(m.src,`${label}.src`,true); requireText(m.alt,`${label}.alt`); if (m.poster) url(m.poster,`${label}.poster`,true); };
       if (c.layout === 'project') media(c.media,`${at}.media`);
       if (c.layout === 'comparison') c.items.forEach((v,j) => { media(v.media,`${at}.items[${j}].media`); if (v.url) url(v.url,`${at}.items[${j}].url`); });
@@ -57,33 +61,60 @@
   function anchor(label, href) { const a = el('a','',label); a.href = href; a.target = '_blank'; a.rel = 'noopener noreferrer'; return a; }
   function contacts() { return append(el('div','contact'), anchor(data.email,`mailto:${data.email}`), anchor(data.homepage.replace(/^https?:\/\//,'').replace(/\/$/,''),data.homepage)); }
   function stars(key, compact = false) {
-    const r = data.repositories[key];
+    const r = data.repositories?.[key];
+    if (!r) return null;
     const a = anchor(`${compact ? '' : 'GitHub ' }★ ${r.stars.toLocaleString('en-US')}`, r.url);
     a.className = 'github-stars';
+    a.dataset.repository = key;
+    a.dataset.compact = String(compact);
+    a.hidden = r.stars < 100;
+    if (a.hidden) a.textContent = '';
     a.title = `${r.name} · GitHub stars`;
     a.setAttribute('aria-label', `${r.name}：${r.stars} GitHub stars`);
     return a;
   }
-  function metricDate() { return null; }
   function applyMetrics(metrics) {
-    if (metrics?.scholar?.citations >= 0 && data.scholar) data.scholar.citations = metrics.scholar.citations;
-    Object.entries(metrics?.repositories || {}).forEach(([key, value]) => { if (data.repositories[key] && value.stars >= 0) data.repositories[key].stars = value.stars; });
+    if (Number.isSafeInteger(metrics?.scholar?.citations) && metrics.scholar.citations >= 0 && data.scholar) data.scholar.citations = metrics.scholar.citations;
+    Object.entries(metrics?.repositories || {}).forEach(([key, value]) => { if (data.repositories?.[key] && Number.isSafeInteger(value?.stars) && value.stars >= 0) data.repositories[key].stars = value.stars; });
+  }
+  function updateMetrics() {
+    document.querySelectorAll('.github-stars[data-repository]').forEach(a => {
+      const r = data.repositories[a.dataset.repository];
+      a.hidden = r.stars < 100;
+      a.textContent = a.hidden ? '' : `${a.dataset.compact === 'true' ? '' : 'GitHub '}★ ${r.stars.toLocaleString('en-US')}`;
+      a.setAttribute('aria-label', `${r.name}：${r.stars} GitHub stars`);
+    });
+    const citations = document.querySelector('.scholar-stat strong');
+    if (citations && data.scholar) citations.textContent = data.scholar.citations.toLocaleString('en-US');
   }
   async function refreshMetrics() {
+    const request = async (endpoint, format = 'json', timeout = 6000) => {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeout);
+      try { const response = await fetch(endpoint, {cache:'no-store',signal:controller.signal}); return response.ok ? await response[format]() : null; }
+      finally { clearTimeout(timer); }
+    };
     try {
-      const local = await fetch('metrics.json',{cache:'no-store'});
-      if (local.ok) applyMetrics(await local.json());
-    } catch (error) { console.warn('本地动态指标接口不可用，继续读取公开 API。', error); }
-    const request = (endpoint, timeout = 6000) => { const controller = new AbortController(); const timer = setTimeout(() => controller.abort(), timeout); return fetch(endpoint,{cache:'no-store',signal:controller.signal}).then(response => response.ok ? response.json() : null).finally(() => clearTimeout(timer)); };
-    await Promise.allSettled(Object.entries(data.repositories || {}).map(async ([key, repo]) => { const value = await request(`https://api.github.com/repos/${repo.name}`); if (Number.isInteger(value?.stargazers_count)) data.repositories[key].stars = value.stargazers_count; }));
-    if (data.scholar?.url) {
-      try {
-        const mirror = await fetch(`https://r.jina.ai/http://${data.scholar.url.replace(/^https?:\/\//,'')}`,{cache:'no-store'});
-        const text = mirror.ok ? await mirror.text() : '';
-        const match = text.match(/Citations\s+([\d,]+)/i);
-        if (match) data.scholar.citations = Number(match[1].replace(/,/g,''));
-      } catch (error) { console.warn('Google Scholar 动态读取失败，使用本地值。', error); }
-    }
+      applyMetrics(await request('metrics.json', 'json', 2500));
+      updateMetrics();
+    } catch { /* Keep the saved snapshot when the local service is unavailable. */ }
+    const requests = Object.entries(data.repositories || {}).map(async ([key, repo]) => {
+      const value = await request(`https://api.github.com/repos/${repo.name}`);
+      if (Number.isSafeInteger(value?.stargazers_count) && value.stargazers_count >= 0) data.repositories[key].stars = value.stargazers_count;
+    });
+    if (data.scholar?.url) requests.push((async () => {
+      const text = await request(`https://r.jina.ai/http://${data.scholar.url.replace(/^https?:\/\//,'')}`, 'text');
+      const match = text?.match(/Citations\s+([\d,]+)/i);
+      if (match) data.scholar.citations = Number(match[1].replace(/,/g,''));
+    })());
+    await Promise.allSettled(requests);
+    updateMetrics();
+  }
+  function syncVideos(slide = deck?.getCurrentSlide()) {
+    document.querySelectorAll('#slides video').forEach(video => {
+      if (!readMode && !printMode && !reducedMotion.matches && !document.hidden && !deck?.isOverview() && slide?.contains(video)) video.play().catch(() => {});
+      else video.pause();
+    });
   }
   function media(m) {
     const frame = el('div','media-frame');
@@ -132,21 +163,42 @@
       const visual=append(el('div','project-visual'),append(el('figure',''),media(c.media),el('figcaption','',c.media.caption||'')));
       if(c.result) visual.append(append(el('div','result'),el('span','result-value',c.result.value),append(el('div',''),el('p','result-label',c.result.label),el('p','result-detail',c.result.detail))));
       if(c.links || c.repository)visual.append(append(el('div','links'),...(c.links || []).map(v=>anchor(v.label,v.url)),c.repository ? stars(c.repository) : null));
-      if(c.repository)visual.append(metricDate());
       section.append(append(el('div',`project-content ${c.result?'':'no-result'}`),copy,visual));
     } else if(c.layout==='comparison') {
-      const grid=el('div','comparison-grid');c.items.forEach(v=>{const item=append(el('article','comparison-item'),el('h2','',v.title),el('p','comparison-meta',v.meta),media(v.media),el('p','comparison-description',v.description));if(v.url || v.repository)item.append(append(el('div','links'),v.url ? anchor('项目演示',v.url) : null,v.repository ? stars(v.repository) : null));grid.append(item);});section.append(grid);if(c.items.some(v=>v.repository))section.append(metricDate());
+      const grid=el('div','comparison-grid');c.items.forEach(v=>{const item=append(el('article','comparison-item'),el('h2','',v.title),el('p','comparison-meta',v.meta),media(v.media),el('p','comparison-description',v.description));if(v.url || v.repository)item.append(append(el('div','links'),v.url ? anchor('项目演示',v.url) : null,v.repository ? stars(v.repository) : null));grid.append(item);});section.append(grid);
     } else if(c.layout==='publications') {
-      const entries = c.rows.map((r,j) => ({row:r, repository:c.repositories?.[j]})).filter(v => !v.repository || data.repositories[v.repository]?.stars >= 100);
-      const table=el('table',`publication-table ${c.repositories ? 'with-stars' : ''}`);const tr=el('tr');[...c.columns,...(c.repositories ? ['GitHub stars'] : [])].forEach(t=>{const th=el('th','',t);th.scope='col';tr.append(th);});table.append(append(el('thead'),tr));const body=el('tbody');entries.forEach(v=>{const row=append(el('tr'),...v.row.map(t=>el('td','',t)));if(c.repositories)row.append(append(el('td'),stars(v.repository,true)));body.append(row);});table.append(body);section.append(append(el('div','publication-scroll'),table));
-      if(c.extraProjects) { const extras=append(el('div','extra-projects'),el('p','','其他核心贡献'));c.extraProjects.filter(v => !v.repository || data.repositories[v.repository]?.stars >= 100).forEach(v=>extras.append(append(el('span','extra-project'),el('span','',`${v.title}（${v.meta}）`),v.repository ? stars(v.repository,true) : el('span','repository-unconfirmed','官方仓库未确认'))));section.append(extras); }
-      if(c.repositories)section.append(metricDate());
+      const table = el('table', `publication-table ${c.repositories ? 'with-stars' : ''}`);
+      table.setAttribute('aria-label', '代表论文');
+      const head = el('tr');
+      [...c.columns, ...(c.repositories ? ['GitHub stars'] : [])].forEach(t => { const th = el('th', '', t); th.scope = 'col'; head.append(th); });
+      table.append(append(el('thead'), head));
+      const body = el('tbody');
+      c.rows.forEach((values, j) => {
+        const row = el('tr');
+        values.forEach((value, column) => row.append(column === 0 && c.rowLinks?.[j] ? append(el('td'), anchor(value, c.rowLinks[j])) : el('td', '', value)));
+        if (c.repositories) row.append(append(el('td'), stars(c.repositories[j], true)));
+        body.append(row);
+      });
+      table.append(body);
+      const publications = append(el('div', `publication-columns ${c.extraProjects?.length ? 'has-extras' : ''}`), append(el('div', 'publication-scroll'), table));
+      if (c.extraProjects?.length) {
+        const extras = append(el('aside', 'extra-projects'), el('h2', '', '其他核心贡献'));
+        c.extraProjects.forEach(v => extras.append(append(el('article', 'extra-project'), append(el('h3'), v.url ? anchor(v.title, v.url) : el('span', '', v.title)), append(el('div', 'extra-project-meta'), el('span', '', v.meta), stars(v.repository, true)))));
+        publications.append(extras);
+      }
+      section.append(publications);
     } else if(c.layout==='expertise') {
-      c.items.forEach((v,j)=>section.append(append(el('article','expertise-row'),el('span','expertise-number',String(j+1).padStart(2,'0')),append(el('div'),el('h2','',v.title),el('p','',v.description),el('p','evidence',v.evidence)))));
+      const abilities = el('div', 'expertise-abilities');
+      if (c.interests) abilities.append(el('h2', 'expertise-heading', '研究能力'));
+      c.items.forEach((v,j) => abilities.append(append(el('article','expertise-row'),el('span','expertise-number',String(j+1).padStart(2,'0')),append(el('div'),el('h3','',v.title),el('p','',v.description),v.evidence ? el('p','evidence',v.evidence) : null))));
+      const columns = append(el('div', `expertise-columns ${c.interests ? 'has-interests' : ''}`), abilities);
+      if (c.interests) columns.append(append(el('div', 'expertise-interests'), el('h2', 'expertise-heading', '研究兴趣'), ...c.interests.map(v => append(el('article'), el('h3','',v.title), el('p','',v.description)))));
+      section.append(columns);
+      if (c.closing) section.append(append(el('div', 'expertise-closing'), c.footer ? el('p', 'expertise-target', c.footer) : null, el('p', 'closing', c.closing), contacts()));
     } else if(c.layout==='outlook') {
       section.append(append(el('div','outlook-items'),...c.items.map(v=>append(el('article'),el('h2','',v.title),el('p','',v.description)))),el('p','closing',c.closing));const contact=contacts();contact.classList.add('outlook-contact');section.append(contact);
     }
-    if(c.footer)section.append(el('p',c.layout==='publications'?'publications-footer':'slide-footer',c.footer));
+    if(c.footer && !(c.layout==='expertise' && c.closing))section.append(el('p',c.layout==='publications'?'publications-footer':'slide-footer',c.footer));
     section.append(el('aside','notes',c.notes||''));return section;
   }
   function update(i) {current=i;$('position').textContent=`${String(i+1).padStart(2,'0')} / ${String(chapters.length).padStart(2,'0')}`;$('previous').disabled=i===0;$('next').disabled=i===chapters.length-1;document.querySelectorAll('#chapter-list button').forEach((b,j)=>b.setAttribute('aria-current',String(i===j)));}
@@ -158,10 +210,13 @@
       const response=await fetch('content.json',{cache:'no-store'});if(!response.ok)throw new Error(`无法读取 content.json（HTTP ${response.status}）。`);
       const raw=await response.text();try{data=JSON.parse(raw);}catch(e){throw new Error(`content.json 的 JSON 格式错误：${e.message}。请检查英文双引号、逗号和括号。`);}
       validate(data);
-      await refreshMetrics();
       chapters=data.chapters.filter(c=>c.visible!==false);document.title=data.title;
       document.body.classList.toggle('read-mode',readMode);$('slides').replaceChildren(...chapters.map(render));
-      if(!readMode){deck=new Reveal({width:1280,height:720,margin:.025,center:false,hash:true,hashOneBasedIndex:false,controls:false,progress:true,transition:matchMedia('(prefers-reduced-motion: reduce)').matches?'none':'fade',transitionSpeed:'fast',scrollActivationWidth:null,keyboardCondition:()=>!document.querySelector('dialog[open]'),pdfSeparateFragments:false,pdfMaxPagesPerSlide:1,plugins:[RevealNotes]});await deck.initialize();deck.on('slidechanged',e=>{update(e.indexh);document.querySelectorAll('video').forEach(v=>{if(!e.currentSlide.contains(v))v.pause();});});update(deck.getIndices().h);}
+      if(!readMode){deck=new Reveal({width:1280,height:720,margin:.025,center:false,hash:true,hashOneBasedIndex:false,controls:false,progress:true,transition:reducedMotion.matches?'none':'fade',transitionSpeed:'fast',scrollActivationWidth:null,keyboardCondition:()=>!document.querySelector('dialog[open]'),pdfSeparateFragments:false,pdfMaxPagesPerSlide:1,plugins:[RevealNotes]});await deck.initialize();deck.on('slidechanged',e=>{update(e.indexh);syncVideos(e.currentSlide);});deck.on('overviewshown',()=>syncVideos());deck.on('overviewhidden',()=>syncVideos());update(deck.getIndices().h);syncVideos();}
+      document.addEventListener('visibilitychange',()=>syncVideos());
+      reducedMotion.addEventListener('change',()=>syncVideos());
+      window.addEventListener('beforeprint',()=>document.querySelectorAll('#slides video').forEach(video=>video.pause()));
+      window.addEventListener('afterprint',()=>syncVideos());
       chapters.forEach((c,i)=>{const b=append(el('button'),el('span','chapter-number',String(i+1).padStart(2,'0')),el('span','',c.title));b.addEventListener('click',()=>{$('chapter-menu').close();go(i);});$('chapter-list').append(append(el('li'),b));});
       $('menu-button').onclick=()=>$('chapter-menu').showModal();$('previous').onclick=()=>go(current-1);$('next').onclick=()=>go(current+1);
       $('mode-button').textContent=readMode?'演示模式':'阅读模式';$('mode-button').onclick=()=>{const u=new URL(location.href);u.searchParams.set('view',readMode?'slides':'scroll');u.hash='/'+chapters[current].id;location.assign(u);};
@@ -172,6 +227,7 @@
       document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d){const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close();}}));
       if(readMode){const id=decodeURIComponent(location.hash.replace(/^#\/?/,''));const initial=chapters.findIndex(c=>c.id===id);if(initial>=0)requestAnimationFrame(()=>go(initial));const syncReadingPosition=()=>{const sections=[...document.querySelectorAll('#slides>section')];const marker=Math.min(innerHeight*.25,180);const active=sections.findIndex(s=>{const r=s.getBoundingClientRect();return r.top<=marker&&r.bottom>marker;});if(active>=0)update(active);};document.addEventListener('scroll',syncReadingPosition,{passive:true});window.addEventListener('resize',syncReadingPosition);document.addEventListener('keydown',e=>{if(e.key.toLowerCase()==='s'&&!e.ctrlKey&&!e.metaKey&&!document.querySelector('dialog[open]')){e.preventDefault();showNotes();}});}
       $('status').hidden=true;document.querySelector('.toolbar').hidden=printMode;update(deck?deck.getIndices().h:current);window.interview={go,get current(){return current;},get chapters(){return chapters;},deck,readMode};
+      void refreshMetrics();
     } catch(error) {$('status').hidden=false;$('status').className='error';$('status').replaceChildren(el('h1','','内容暂时无法显示'),el('p','',error.message),el('p','','修正文件后刷新页面即可。'));console.error(error);}
   }
   start();

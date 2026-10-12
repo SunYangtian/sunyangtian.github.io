@@ -95,11 +95,67 @@
       ]
     },
     {
+      "id": "multilive",
+      "layout": "project",
+      "title": "MultiLive",
+      "visible": true,
+      "eyebrow": "SELECTED RESEARCH / 01",
+      "subtitle": "面向多视角视频生成的双教师蒸馏",
+      "venue": "2026",
+      "authorship": "共同第一作者 · 项目负责人",
+      "blocks": [
+        {
+          "label": "问题",
+          "text": "多视角视频同时需要跨视角几何一致与时间动态，但同步训练数据稀缺。"
+        },
+        {
+          "label": "方法",
+          "text": "用 on-policy 双教师蒸馏：视频教师约束时间动态，多视角教师约束几何与外观。"
+        },
+        {
+          "label": "结果",
+          "text": "无需多视角视频训练数据，联合生成 4 个同步视角，推理仅需 4 步去噪。"
+        }
+      ],
+      "result": {
+        "value": "4 × 4",
+        "label": "视角 × 去噪步数",
+        "detail": "无需同步多视角视频训练数据"
+      },
+      "media": {
+        "type": "image",
+        "src": "assets/multilive.gif",
+        "poster": "assets/multilive-poster.jpg",
+        "alt": "MultiLive 同步多视角视频生成结果",
+        "caption": "四个同步视角 / 四步去噪"
+      },
+      "links": [
+        {
+          "label": "项目演示",
+          "url": "https://vast-eden.ai/?p=multilive"
+        },
+        {
+          "label": "论文",
+          "url": "https://huggingface.co/datasets/ToRealU/eden-page-assets/resolve/main/assets/multilive/paper.pdf"
+        },
+        {
+          "label": "代码",
+          "url": "https://github.com/VAST-AI-Research/MultiLive"
+        }
+      ],
+      "notes": "MultiLive 面向多视角视频生成，同时处理跨视角几何一致性和视频内时间连贯性。学生模型以 on-policy 方式生成完整的时间 × 视角 latent 网格；视频教师负责运动与时间动态，多视角教师负责每个时间点的几何和外观一致性。两个教师共同监督同一次学生生成，无需同步多视角视频训练数据，推理时用 4 步去噪生成 4 个同步视角。我的身份是共同第一作者和项目负责人。",
+      "sources": [
+        "https://vast-eden.ai/?p=multilive",
+        "https://huggingface.co/datasets/ToRealU/eden-page-assets/resolve/main/assets/multilive/paper.pdf",
+        "https://github.com/VAST-AI-Research/MultiLive"
+      ]
+    },
+    {
       "id": "stereo-world",
       "layout": "project",
       "title": "Stereo World Model",
       "visible": true,
-      "eyebrow": "SELECTED RESEARCH / 01",
+      "eyebrow": "SELECTED RESEARCH / 02",
       "subtitle": "相机可控的双目视频生成",
       "venue": "CVPR 2026",
       "authorship": "第一作者",
@@ -152,7 +208,7 @@
       "layout": "project",
       "title": "Mira-Scene",
       "visible": true,
-      "eyebrow": "SELECTED RESEARCH / 02",
+      "eyebrow": "SELECTED RESEARCH / 03",
       "subtitle": "像素对齐的生成式三维场景重建",
       "venue": "arXiv 2026",
       "authorship": "第一作者",
@@ -204,7 +260,7 @@
       "layout": "project",
       "title": "UniGeo",
       "visible": true,
-      "eyebrow": "SELECTED RESEARCH / 03",
+      "eyebrow": "SELECTED RESEARCH / 04",
       "subtitle": "视频扩散模型中的一致几何估计",
       "venue": "arXiv 2025",
       "authorship": "第一作者",
@@ -250,7 +306,7 @@
       "layout": "comparison",
       "title": "动态场景与视频的显式表示",
       "visible": true,
-      "eyebrow": "SELECTED RESEARCH / 04",
+      "eyebrow": "SELECTED RESEARCH / 05",
       "items": [
         {
           "title": "Splatter a Video",
@@ -298,6 +354,11 @@
       ],
       "rows": [
         [
+          "MultiLive",
+          "arXiv 2026",
+          "共同第一作者 · 项目负责人"
+        ],
+        [
           "Stereo World Model",
           "CVPR 2026",
           "第一作者"
@@ -338,8 +399,9 @@
           "第一作者"
         ]
       ],
-      "notes": "论文使用短标题；SC-GS 与 NeRF-Editing 根据作者列表中的共同贡献标记为共同第一作者。点击标题打开项目主页；无主页的条目链接论文。所有论文均保留，GitHub stars 达到 100 时显示；网络不可用时使用本地快照。其他核心贡献的发表信息以项目主页、论文页面与出版记录为准，Google Scholar 用于完整论文列表索引。完整题名和作者列表见个人主页。",
+      "notes": "论文使用短标题；MultiLive 标记为共同第一作者与项目负责人；SC-GS 与 NeRF-Editing 根据作者列表中的共同贡献标记为共同第一作者。点击标题打开项目主页；无主页的条目链接论文。所有论文均保留，GitHub stars 达到 100 时显示；网络不可用时使用本地快照。其他核心贡献的发表信息以项目主页、论文页面与出版记录为准，Google Scholar 用于完整论文列表索引。完整题名和作者列表见个人主页。",
       "sources": [
+        "https://vast-eden.ai/?p=multilive",
         "https://sunyangtian.github.io/",
         "https://scholar.google.com/citations?hl=en&user=a4GKTmsAAAAJ",
         "https://vast-eden.ai/?p=stereo-world",
@@ -362,6 +424,7 @@
         "https://arxiv.org/abs/2609.01172"
       ],
       "repositories": [
+        null,
         "stereo-world",
         "mira-scene",
         "unigeo",
@@ -428,6 +491,7 @@
         }
       ],
       "rowLinks": [
+        "https://vast-eden.ai/?p=multilive",
         "https://vast-eden.ai/?p=stereo-world",
         "https://vast-eden.ai/?p=mira-scene",
         "https://sunyangtian.github.io/UniGeo-web/",

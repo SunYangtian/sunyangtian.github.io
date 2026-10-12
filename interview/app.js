@@ -74,7 +74,7 @@
     return a;
   }
   function applyMetrics(metrics) {
-    if (Number.isSafeInteger(metrics?.scholar?.citations) && metrics.scholar.citations >= 0 && data.scholar) data.scholar.citations = metrics.scholar.citations;
+    if (Number.isSafeInteger(metrics?.scholar?.citations) && metrics.scholar.citations > 0 && data.scholar) data.scholar.citations = metrics.scholar.citations;
     Object.entries(metrics?.repositories || {}).forEach(([key, value]) => { if (data.repositories?.[key] && Number.isSafeInteger(value?.stars) && value.stars >= 0) data.repositories[key].stars = value.stars; });
   }
   function updateMetrics() {
@@ -87,6 +87,21 @@
     const citations = document.querySelector('.scholar-stat strong');
     if (citations && data.scholar) citations.textContent = data.scholar.citations.toLocaleString('en-US');
   }
+  function parseCitations(text) {
+    if (typeof text !== 'string') return null;
+    const patterns = [
+      /<td[^>]*class=["'][^"']*\bgsc_rsb_std\b[^"']*["'][^>]*>\s*([\d,]+)/i,
+      /(?:^|\n)\s*\|\s*Citations\s*\|\s*([\d,]+)\s*(?:\||$)/im,
+      /(?:^|\n)\s*Citations\s*(?:\||:\s*|\s+)([\d,]+)\b/im,
+      /\bCitations\s+([\d,]+)\b/i
+    ];
+    for (const pattern of patterns) {
+      const match = text.match(pattern);
+      const citations = match && Number(match[1].replace(/,/g, ''));
+      if (Number.isSafeInteger(citations) && citations > 0) return citations;
+    }
+    return null;
+  }
   async function refreshMetrics() {
     const request = async (endpoint, format = 'json', timeout = 6000) => {
       const controller = new AbortController();
@@ -94,18 +109,32 @@
       try { const response = await fetch(endpoint, {cache:'no-store',signal:controller.signal}); return response.ok ? await response[format]() : null; }
       finally { clearTimeout(timer); }
     };
-    try {
-      applyMetrics(await request('metrics.json', 'json', 2500));
+    const live = { scholar: false, repositories: new Set() };
+    const requests = [(async () => {
+      // The local endpoint may contact public APIs; it runs after the saved snapshot is rendered.
+      const metrics = await request('metrics.json', 'json', 35000);
+      if (!live.scholar) applyMetrics({scholar: metrics?.scholar});
+      Object.entries(metrics?.repositories || {}).forEach(([key, value]) => {
+        if (!live.repositories.has(key)) applyMetrics({repositories: {[key]: value}});
+      });
       updateMetrics();
-    } catch { /* Keep the saved snapshot when the local service is unavailable. */ }
-    const requests = Object.entries(data.repositories || {}).map(async ([key, repo]) => {
+    })()];
+    requests.push(...Object.entries(data.repositories || {}).map(async ([key, repo]) => {
       const value = await request(`https://api.github.com/repos/${repo.name}`);
-      if (Number.isSafeInteger(value?.stargazers_count) && value.stargazers_count >= 0) data.repositories[key].stars = value.stargazers_count;
-    });
+      if (Number.isSafeInteger(value?.stargazers_count) && value.stargazers_count >= 0) {
+        data.repositories[key].stars = value.stargazers_count;
+        live.repositories.add(key);
+        updateMetrics();
+      }
+    }));
     if (data.scholar?.url) requests.push((async () => {
-      const text = await request(`https://r.jina.ai/http://${data.scholar.url.replace(/^https?:\/\//,'')}`, 'text');
-      const match = text?.match(/Citations\s+([\d,]+)/i);
-      if (match) data.scholar.citations = Number(match[1].replace(/,/g,''));
+      const text = await request(`https://r.jina.ai/http://${data.scholar.url.replace(/^https?:\/\//,'')}`, 'text', 10000);
+      const citations = parseCitations(text);
+      if (Number.isSafeInteger(citations) && citations > 0) {
+        data.scholar.citations = citations;
+        live.scholar = true;
+        updateMetrics();
+      }
     })());
     await Promise.allSettled(requests);
     updateMetrics();
@@ -138,7 +167,8 @@
         const copy = append(el('div','profile-copy'),identity,el('h2','profile-focus',c.subtitle),el('p','description',c.description),el('p','intent',c.intent));
         if (data.scholar) {
           const scholar = anchor('',data.scholar.url); scholar.className = 'scholar-stat';
-          append(scholar,el('strong','',data.scholar.citations.toLocaleString('en-US')),append(el('span'),el('span','scholar-label','Google Scholar'),el('span','scholar-caption','Citations · 总引用')));
+          scholar.title = '打开 Google Scholar 个人主页（新窗口）';
+          append(scholar,el('strong','',data.scholar.citations.toLocaleString('en-US')),append(el('span'),el('span','scholar-label','Google Scholar ↗'),el('span','scholar-caption','Citations · 总引用')));
           copy.append(scholar);
         }
         copy.append(contacts());

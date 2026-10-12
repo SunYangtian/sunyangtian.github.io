@@ -15,6 +15,25 @@ import webbrowser
 ROOT = Path(__file__).resolve().parent
 
 
+def parse_citations(text):
+    """Return a positive all-time citation count from Scholar output, if present."""
+    if not isinstance(text, str):
+        return None
+    patterns = (
+        r'<td[^>]*class=["\'][^"\']*\bgsc_rsb_std\b[^"\']*["\'][^>]*>\s*([\d,]+)',
+        r'(?:^|\n)\s*\|\s*Citations\s*\|\s*([\d,]+)\s*(?:\||$)',
+        r'(?:^|\n)\s*Citations\s*(?:\||:\s*|\s+)([\d,]+)\b',
+        r'\bCitations\s+([\d,]+)\b',
+    )
+    for pattern in patterns:
+        match = re.search(pattern, text, flags=re.IGNORECASE | re.MULTILINE)
+        if match:
+            citations = int(match.group(1).replace(',', ''))
+            if citations > 0:
+                return citations
+    return None
+
+
 class Handler(SimpleHTTPRequestHandler):
     def do_GET(self):
         if self.path.split('?', 1)[0] == '/metrics.json':
@@ -32,33 +51,42 @@ class Handler(SimpleHTTPRequestHandler):
         result = json.loads(json.dumps(fallback))
         headers = {'User-Agent': 'Yang-Tian-Sun-interview-metrics/1.0', 'Accept': 'application/vnd.github+json'}
 
-        def read(url):
+        def read(url, timeout=8):
             request = urllib.request.Request(url, headers=headers)
-            with urllib.request.urlopen(request, timeout=8) as response:
+            with urllib.request.urlopen(request, timeout=timeout) as response:
                 return response.read()
 
-        try:
-            scholar_html = read(config['scholar']['url']).decode('utf-8', errors='replace')
-            values = re.findall(r'<td[^>]*class="gsc_rsb_std"[^>]*>\s*([\d,]+)', scholar_html)
-            if values:
-                result['scholar']['citations'] = int(values[0].replace(',', ''))
-        except Exception as exc:
-            print(f'动态读取 Google Scholar 失败，使用本地快照：{exc}', file=sys.stderr)
+        def scholar_metric():
+            scholar_html = read(config['scholar']['url'], timeout=25).decode('utf-8', errors='replace')
+            return parse_citations(scholar_html)
 
         def github_metric(item):
             key, repo = item
             payload = json.loads(read(f"https://api.github.com/repos/{repo['name']}").decode('utf-8'))
             return key, payload.get('stargazers_count')
 
-        with ThreadPoolExecutor(max_workers=8) as pool:
-            futures = [pool.submit(github_metric, item) for item in config.get('repositories', {}).items()]
+        repository_items = list(config.get('repositories', {}).items())
+        futures = {}
+        worker_count = max(1, len(repository_items) + (1 if config.get('scholar', {}).get('url') else 0))
+        with ThreadPoolExecutor(max_workers=worker_count) as pool:
+            if config.get('scholar', {}).get('url'):
+                futures[pool.submit(scholar_metric)] = ('scholar', None)
+            for item in repository_items:
+                futures[pool.submit(github_metric, item)] = ('github', item[0])
             for future in as_completed(futures):
+                kind, key = futures[future]
                 try:
-                    key, stars = future.result()
-                    if isinstance(stars, int):
-                        result['repositories'][key]['stars'] = stars
+                    if kind == 'scholar':
+                        citations = future.result()
+                        if isinstance(citations, int) and citations > 0:
+                            result['scholar']['citations'] = citations
+                    else:
+                        _, stars = future.result()
+                        if isinstance(stars, int):
+                            result['repositories'][key]['stars'] = stars
                 except Exception as exc:
-                    print(f'动态读取 GitHub stars 失败，使用本地快照：{exc}', file=sys.stderr)
+                    label = 'Google Scholar' if kind == 'scholar' else 'GitHub stars'
+                    print(f'动态读取 {label} 失败，使用本地快照：{exc}', file=sys.stderr)
 
         body = json.dumps(result, ensure_ascii=False).encode('utf-8')
         self.send_response(200)

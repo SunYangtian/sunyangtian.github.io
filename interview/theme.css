@@ -26,12 +26,12 @@ body.read-mode{overflow:auto}.read-mode .reveal{height:auto;font-size:24px;overf
 /* Keep the full publication list readable alongside linked core contributions. */
 .publication-columns.has-extras{display:grid;grid-template-columns:minmax(0,1.94fr) minmax(0,1fr);gap:32px;align-items:start}
 .publication-scroll{min-width:0}
-.publication-table.with-stars{table-layout:fixed;font-size:18px;line-height:1.45}
-.publication-table.with-stars th{font-size:14px;padding:0 8px 13px}
-.publication-table.with-stars td{padding:14px 8px}
+.publication-table.with-stars{table-layout:fixed;font-size:16px;line-height:1.4}
+.publication-table.with-stars th{font-size:13px;padding:0 8px 11px}
+.publication-table.with-stars td{padding:10px 8px}
 .publication-table.with-stars th:first-child,.publication-table.with-stars td:first-child{width:43%;padding-left:0}
 .publication-table.with-stars th:nth-child(2),.publication-table.with-stars td:nth-child(2){width:22%}
-.publication-table.with-stars th:nth-child(3),.publication-table.with-stars td:nth-child(3){width:19%;font-size:16px}
+.publication-table.with-stars th:nth-child(3),.publication-table.with-stars td:nth-child(3){width:19%;font-size:15px}
 .publication-table.with-stars th:last-child,.publication-table.with-stars td:last-child{width:16%;padding-right:0}
 .publication-table a,.extra-project h3 a{text-decoration:none}
 .publication-table a:hover,.extra-project h3 a:hover{text-decoration:underline}

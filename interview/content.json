@@ -95,11 +95,64 @@
       ]
     },
     {
+      "id": "stereo-world",
+      "layout": "project",
+      "title": "Stereo World Model",
+      "visible": true,
+      "eyebrow": "SELECTED RESEARCH / 01",
+      "subtitle": "相机可控的双目视频生成",
+      "venue": "CVPR 2026",
+      "authorship": "第一作者",
+      "blocks": [
+        {
+          "label": "问题",
+          "text": "同时保证左右视图的几何一致性与相机运动的可控性。"
+        },
+        {
+          "label": "方法",
+          "text": "相机与帧联合 RoPE 编码，双目注意力结合极线几何先验。"
+        },
+        {
+          "label": "应用",
+          "text": "双目 VR 渲染与具身策略学习。"
+        }
+      ],
+      "result": {
+        "value": ">3×",
+        "label": "生成速度",
+        "detail": "相较论文中的单目生成后转换流程"
+      },
+      "media": {
+        "type": "video",
+        "src": "assets/stereo-world-demo.mp4",
+        "poster": "assets/stereo-world-poster.jpg",
+        "alt": "双目生成、独立相机控制、立体深度与长序列生成演示",
+        "caption": "固定基线 / 独立相机控制 / 立体深度 / 长序列"
+      },
+      "links": [
+        {
+          "label": "项目演示",
+          "url": "https://vast-eden.ai/?p=stereo-world"
+        },
+        {
+          "label": "论文",
+          "url": "https://arxiv.org/abs/2603.17375"
+        }
+      ],
+      "notes": "StereoWorld 直接在 RGB 模态中联合生成双目视频，通过视差提供几何约束。联合相机帧 RoPE 支持相对视角与时间条件，注意力分解结合极线先验。速度数字对应论文中的单目生成后转换流程。",
+      "sources": [
+        "https://arxiv.org/abs/2603.17375",
+        "https://sunyangtian.github.io/",
+        "https://vast-eden.ai/?p=stereo-world"
+      ],
+      "repository": "stereo-world"
+    },
+    {
       "id": "multilive",
       "layout": "project",
       "title": "MultiLive",
       "visible": true,
-      "eyebrow": "SELECTED RESEARCH / 01",
+      "eyebrow": "SELECTED RESEARCH / 02",
       "subtitle": "面向多视角视频生成的双教师蒸馏",
       "venue": "2026",
       "authorship": "共同第一作者 · 项目负责人",
@@ -149,59 +202,6 @@
         "https://huggingface.co/datasets/ToRealU/eden-page-assets/resolve/main/assets/multilive/paper.pdf",
         "https://github.com/VAST-AI-Research/MultiLive"
       ]
-    },
-    {
-      "id": "stereo-world",
-      "layout": "project",
-      "title": "Stereo World Model",
-      "visible": true,
-      "eyebrow": "SELECTED RESEARCH / 02",
-      "subtitle": "相机可控的双目视频生成",
-      "venue": "CVPR 2026",
-      "authorship": "第一作者",
-      "blocks": [
-        {
-          "label": "问题",
-          "text": "同时保证左右视图的几何一致性与相机运动的可控性。"
-        },
-        {
-          "label": "方法",
-          "text": "相机与帧联合 RoPE 编码，双目注意力结合极线几何先验。"
-        },
-        {
-          "label": "应用",
-          "text": "双目 VR 渲染与具身策略学习。"
-        }
-      ],
-      "result": {
-        "value": ">3×",
-        "label": "生成速度",
-        "detail": "相较论文中的单目生成后转换流程"
-      },
-      "media": {
-        "type": "video",
-        "src": "assets/stereo-world-demo.mp4",
-        "poster": "assets/stereo-world-poster.jpg",
-        "alt": "双目生成、独立相机控制、立体深度与长序列生成演示",
-        "caption": "固定基线 / 独立相机控制 / 立体深度 / 长序列"
-      },
-      "links": [
-        {
-          "label": "项目演示",
-          "url": "https://vast-eden.ai/?p=stereo-world"
-        },
-        {
-          "label": "论文",
-          "url": "https://arxiv.org/abs/2603.17375"
-        }
-      ],
-      "notes": "StereoWorld 直接在 RGB 模态中联合生成双目视频，通过视差提供几何约束。联合相机帧 RoPE 支持相对视角与时间条件，注意力分解结合极线先验。速度数字对应论文中的单目生成后转换流程。",
-      "sources": [
-        "https://arxiv.org/abs/2603.17375",
-        "https://sunyangtian.github.io/",
-        "https://vast-eden.ai/?p=stereo-world"
-      ],
-      "repository": "stereo-world"
     },
     {
       "id": "mira-scene",

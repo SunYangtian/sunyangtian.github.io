@@ -129,7 +129,7 @@ python3 scripts/build_demos.py --check
 
 ## 以后放到个人主页
 
-将 `index.html`、`app.js`、`theme.css`、`content.json`、`assets/`、`vendor/` 一起复制到网站的 `interview/` 目录，再在主页增加指向 `interview/` 的链接。网页无后台或数据库。Python 服务和启动脚本仅用于本地，不是线上依赖。
+将 `index.html`、`app.js`、`theme.css`、`content.json`、`metrics.json`、`assets/`、`vendor/` 一起复制到网站的 `interview/` 目录，再在主页增加指向 `interview/` 的链接。网页无后台或数据库。Python 服务和启动脚本仅用于本地，不是线上依赖。
 
 ## 内容来源与许可证
 
@@ -141,11 +141,43 @@ python3 scripts/build_demos.py --check
 
 首页合并个人介绍、教育背景和产业经历。原 `education`、`experience` 章节保留数据，设为 `visible: false`，由首页 `educationId`、`experienceId` 引用；编辑这两个章节仍会更新首页内容。
 
-- `scholar`：`url` 为 Scholar 主页，`citations` 为动态请求失败时使用的本地后备值。
-- `repositories`：按项目键保存官方仓库 `name`、`url`、`stars`；`stars` 是动态请求失败时使用的本地后备值。
-- 本地服务的 `/metrics.json` 每次页面加载时读取 Google Scholar 和 GitHub API，网页随后更新数字；网络不可用或 API 限流时自动使用 `content.json` 中的后备值。
+- `scholar`：`url` 为 Scholar 主页，`citations` 为初始后备值；它不是实时数据。
+- `repositories`：按项目键保存官方仓库 `name`、`url`、`stars`；页面加载后仍直接通过 GitHub 官方 API 更新 stars。网络不可用或 API 限流时保留本地值。
+- `metrics.json`：与网页一起发布的 **静态 Scholar 快照**，本地预览与 GitHub Pages 使用同一文件。不再在浏览器中请求 Scholar 或 Jina 代理，也不依赖 Python 动态接口。
+- 页面加载时读取快照；页面保持打开时每小时检查一次，回到标签页时若已超过一小时也会检查。恢复联网时会重试此前失败的快照读取。全部后台执行，不阻塞展示。
+- 首页显示快照日期（UTC），悬停可查看完整成功时间。超过 7 天显示“快照较旧”。初始记录为 `1530`、`updated_at: null`、`source: local-fallback`，显示“等待首次自动更新”；绝不把创建文件的时间假装成成功抓取时间。
+- 快照读取失败时保留当前值及成功日期并显示提示。只接受同一 Scholar 账号、有效非负整数和合法成功时间；Google 校正导致的真实减少或零值也可以更新，不强制数字只增不减。
 - 项目章节及对比项目的 `repository` 引用对应项目键。
 - 代表论文的 `repositories` 与 `rows` 一一对应，单项可为 `null`（无仓库）；提供该数组时增加 stars 列。论文行始终保留，少于 100 stars 或无仓库时单元格留空，100 及以上才显示数字。其他核心贡献使用相同规则。
 - 可选 `rowLinks` 与 `rows` 一一对应，单项为项目主页／论文 URL 或 `null`，用于论文名称超链接。`extraProjects` 每项含 `title`、`meta`，可选 `url`、`repository`。名称优先链接到项目主页，没有主页时链接论文。
 
 点击数字可打开来源。手机端论文表格支持横向滚动。
+
+### 启用 GitHub Actions 定时快照
+
+1. 将本次修改提交并推送到默认分支（本仓库当前为 `master`），包括 `.github/workflows/update-scholar.yml`、`interview/metrics.json`、采集脚本与测试。仅修改本地文件不会启用线上定时任务。
+2. 确认 **Settings → Pages → Build and deployment → Deploy from a branch → 默认分支（当前为 master）→ /(root)**。任务会通过 API 检查发布方式，若是自定义 Actions 部署、其他分支或子目录，会在提交前报错退出；它不会擅自更改 Pages 设置。如已有自定义部署流程，应另行接入，而不是无条件切换设置。
+3. 在仓库 **Actions** 中允许工作流运行，进入 **Update Scholar snapshot → Run workflow**，首次手动执行。之后每天 **04:27 UTC / 北京时间 12:27** 自动尝试一次；GitHub 的定时运行可能延迟，长期无活动仓库的计划任务也可能被平台停用。
+4. 工作流使用内置 `GITHUB_TOKEN`，仅申请 `contents: write`（提交快照）与 `pages: write`（请求构建），不需要 PAT、付费服务或额外密钥。仓库/组织策略、分支保护仍可能拒绝写入；需要维护者检查权限，工作流不会强推或绕过保护。
+5. 成功抓取后，仅提交 `interview/metrics.json`，然后**显式请求 Pages 构建**。`GITHUB_TOKEN` 的自动提交不会自行触发 Pages 构建，因此不能省略这一步。构建请求成功只是入队，应再查看 Pages 部署结果，并确认 `https://sunyangtian.github.io/interview/metrics.json` 返回 JSON 而非 404。
+6. 首页刷新后应显示成功快照日期；`updated_at` 只记录成功读取 Scholar 的时间，既不是页面访问时间，也不是 Google 新增引用的时间。引用总数以源站为准，不承诺每天增长。
+
+抓取只访问公开 Scholar 主页，不使用代理或绕过验证码。脚本校验账号、个人主页标记及 `Citations / All` 统计表，避免误把近年引用或 h-index 当成总引用。网络超时、403/429、验证码、页面格式变化或解析失败均使任务明确失败，**旧快照字节和成功时间不变**；需要查看 Actions 失败日志。若抓取成功但后续 Git push / Pages 构建失败，有效快照可能已提交但未上线，修复原因后重跑任务即可。仅延长超时或增加刷新频率不能消除 Scholar 的访问限制。
+
+### 本地手动更新与测试
+
+仅需 Python 3.10+ 与 curl；命令从仓库根目录执行：
+
+```sh
+# 实际抓取并成功后原子更新快照；总网络请求有时限
+python3 -B interview/scripts/update_scholar.py --timeout 25
+# 抓取、校验，但不修改文件
+python3 -B interview/scripts/update_scholar.py --dry-run
+# 无外网的回归测试；前端测试使用 Node.js 18+
+python3 -B -m unittest discover -s interview/tests -p 'test_*.py' -v
+node --test interview/tests/metrics.test.cjs
+```
+
+本地服务只提供文件；要使用线上新快照，请先拉取仓库最新提交或执行更新脚本。**从旧版升级时，请先在原终端按 Control+C 停止旧服务，再重新启动**，否则旧 Python 进程仍可能拦截 `/metrics.json`。测试中的数字全部是临时样例，不会写入站点快照。
+
+参考：[GitHub Actions 权限](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#permissions)、[Pages 构建 API](https://docs.github.com/en/rest/pages/pages#request-a-github-pages-build)、[Pages 发布源与自动提交限制](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)。

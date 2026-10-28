@@ -16,7 +16,7 @@
       "description": "视频生成 / 世界模型 / 生成式三维重建",
       "intent": "企业科研与视觉算法岗位",
       "portrait": "assets/portrait.jpg",
-      "notes": "大家好，我是 Yang-Tian Sun，目前在香港大学攻读博士。我的研究结合视频模型的生成能力与三维几何约束，下面介绍我的背景、产业经历和代表研究。\n我的本科专业是应用物理，硕士阶段转向计算机视觉与图形学，博士阶段聚焦视频生成和三维视觉。\nGoogle Scholar 和 GitHub stars 会在页面加载时动态更新；网络不可用时使用最近保存的本地数据。",
+      "notes": "大家好，我是 Yang-Tian Sun，目前在香港大学攻读博士。我的研究结合视频模型的生成能力与三维几何约束，下面介绍我的背景、产业经历和代表研究。\n我的本科专业是应用物理，硕士阶段转向计算机视觉与图形学，博士阶段聚焦视频生成和三维视觉。\nGoogle Scholar 引用数读取定期更新的静态快照，页面显示最后成功抓取日期；GitHub stars 在页面加载时通过官方 API 更新。网络不可用时保留已保存的数据。",
       "sources": [
         "https://sunyangtian.github.io/",
         "https://sunyangtian.github.io/files/resume.pdf",

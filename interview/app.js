@@ -73,9 +73,31 @@
     a.setAttribute('aria-label', `${r.name}：${r.stars} GitHub stars`);
     return a;
   }
-  function applyMetrics(metrics) {
-    if (Number.isSafeInteger(metrics?.scholar?.citations) && metrics.scholar.citations > 0 && data.scholar) data.scholar.citations = metrics.scholar.citations;
-    Object.entries(metrics?.repositories || {}).forEach(([key, value]) => { if (data.repositories?.[key] && Number.isSafeInteger(value?.stars) && value.stars >= 0) data.repositories[key].stars = value.stars; });
+  let scholarSnapshot = null, scholarSnapshotUnavailable = false, scholarRefreshing = false, lastScholarCheck = 0;
+  const scholarRefreshInterval = 60 * 60 * 1000;
+  function scholarUser(value) {
+    try {
+      const u = new URL(value), users = u.searchParams.getAll('user');
+      return u.origin === 'https://scholar.google.com' && u.pathname === '/citations' && !u.username && !u.password && users.length === 1 && /^[A-Za-z0-9_-]{6,64}$/.test(users[0]) ? users[0] : null;
+    } catch { return null; }
+  }
+  function applyScholarSnapshot(metrics) {
+    const s = metrics?.scholar;
+    if (metrics?.schema_version !== 1 || !data.scholar || !s || !Number.isSafeInteger(s.citations) || s.citations < 0) return false;
+    const user = scholarUser(data.scholar.url);
+    if (!user || scholarUser(s.url) !== user) return false;
+    if (s.updated_at === null && s.source === 'local-fallback') {
+      // The initial seed is not a newly verified citation count.
+      if (!scholarSnapshot) data.scholar.citations = s.citations;
+      return true;
+    }
+    if (s.source !== 'google-scholar' || typeof s.updated_at !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(s.updated_at)) return false;
+    const timestamp = Date.parse(s.updated_at);
+    if (!Number.isFinite(timestamp) || new Date(timestamp).toISOString().replace('.000Z', 'Z') !== s.updated_at || timestamp > Date.now() + 5 * 60 * 1000) return false;
+    if (scholarSnapshot && timestamp < Date.parse(scholarSnapshot.updated_at)) return false;
+    data.scholar.citations = s.citations;
+    scholarSnapshot = {...s};
+    return true;
   }
   function updateMetrics() {
     document.querySelectorAll('.github-stars[data-repository]').forEach(a => {
@@ -86,58 +108,60 @@
     });
     const citations = document.querySelector('.scholar-stat strong');
     if (citations && data.scholar) citations.textContent = data.scholar.citations.toLocaleString('en-US');
-  }
-  function parseCitations(text) {
-    if (typeof text !== 'string') return null;
-    const patterns = [
-      /<td[^>]*class=["'][^"']*\bgsc_rsb_std\b[^"']*["'][^>]*>\s*([\d,]+)/i,
-      /(?:^|\n)\s*\|\s*Citations\s*\|\s*([\d,]+)\s*(?:\||$)/im,
-      /(?:^|\n)\s*Citations\s*(?:\||:\s*|\s+)([\d,]+)\b/im,
-      /\bCitations\s+([\d,]+)\b/i
-    ];
-    for (const pattern of patterns) {
-      const match = text.match(pattern);
-      const citations = match && Number(match[1].replace(/,/g, ''));
-      if (Number.isSafeInteger(citations) && citations > 0) return citations;
+    const status = $('scholar-status');
+    if (status) {
+      if (scholarSnapshot) {
+        const stale = Date.now() - Date.parse(scholarSnapshot.updated_at) > 7 * 24 * 60 * 60 * 1000;
+        status.textContent = `引用快照 · ${scholarSnapshot.updated_at.slice(0, 10)} (UTC)${stale ? ' · 快照较旧' : ''}${scholarSnapshotUnavailable ? ' · 暂无法检查更新' : ''}`;
+        status.title = `来源：Google Scholar；最后成功抓取：${scholarSnapshot.updated_at}。抓取失败不会修改此时间。`;
+        status.dataset.state = scholarSnapshotUnavailable ? 'unavailable' : stale ? 'stale' : 'snapshot';
+      } else {
+        status.textContent = scholarSnapshotUnavailable ? '本地记录 · 暂无法读取自动快照' : '本地记录 · 等待首次自动更新';
+        status.title = '此数字来自已保存的本地记录，尚无成功自动抓取的时间。点击 Google Scholar 查看源站。';
+        status.dataset.state = 'fallback';
+      }
     }
-    return null;
+  }
+  async function requestMetric(endpoint, timeout = 6000) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeout);
+    try {
+      const response = await fetch(endpoint, {cache:'no-store',signal:controller.signal});
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return await response.json();
+    } finally { clearTimeout(timer); }
+  }
+  async function refreshScholarSnapshot() {
+    if (!data.scholar || scholarRefreshing) return;
+    scholarRefreshing = true;
+    lastScholarCheck = Date.now();
+    try {
+      const metrics = await requestMetric('metrics.json');
+      if (!applyScholarSnapshot(metrics)) throw new Error('Invalid Scholar snapshot');
+      scholarSnapshotUnavailable = false;
+    } catch { scholarSnapshotUnavailable = true; }
+    finally { scholarRefreshing = false; updateMetrics(); }
   }
   async function refreshMetrics() {
-    const request = async (endpoint, format = 'json', timeout = 6000) => {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), timeout);
-      try { const response = await fetch(endpoint, {cache:'no-store',signal:controller.signal}); return response.ok ? await response[format]() : null; }
-      finally { clearTimeout(timer); }
-    };
-    const live = { scholar: false, repositories: new Set() };
-    const requests = [(async () => {
-      // The local endpoint may contact public APIs; it runs after the saved snapshot is rendered.
-      const metrics = await request('metrics.json', 'json', 35000);
-      if (!live.scholar) applyMetrics({scholar: metrics?.scholar});
-      Object.entries(metrics?.repositories || {}).forEach(([key, value]) => {
-        if (!live.repositories.has(key)) applyMetrics({repositories: {[key]: value}});
-      });
-      updateMetrics();
-    })()];
-    requests.push(...Object.entries(data.repositories || {}).map(async ([key, repo]) => {
-      const value = await request(`https://api.github.com/repos/${repo.name}`);
+    // Scholar uses a scheduled same-origin snapshot; GitHub keeps its official live API.
+    const requests = [refreshScholarSnapshot(), ...Object.entries(data.repositories || {}).map(async ([key, repo]) => {
+      const value = await requestMetric(`https://api.github.com/repos/${repo.name}`);
       if (Number.isSafeInteger(value?.stargazers_count) && value.stargazers_count >= 0) {
         data.repositories[key].stars = value.stargazers_count;
-        live.repositories.add(key);
         updateMetrics();
       }
-    }));
-    if (data.scholar?.url) requests.push((async () => {
-      const text = await request(`https://r.jina.ai/http://${data.scholar.url.replace(/^https?:\/\//,'')}`, 'text', 10000);
-      const citations = parseCitations(text);
-      if (Number.isSafeInteger(citations) && citations > 0) {
-        data.scholar.citations = citations;
-        live.scholar = true;
-        updateMetrics();
-      }
-    })());
+    })];
     await Promise.allSettled(requests);
-    updateMetrics();
+  }
+  function watchScholarSnapshot() {
+    const check = () => {
+      if (!document.hidden && Date.now() - lastScholarCheck >= scholarRefreshInterval) void refreshScholarSnapshot();
+    };
+    setInterval(check, scholarRefreshInterval);
+    document.addEventListener('visibilitychange', check);
+    window.addEventListener('online', () => {
+      if (!document.hidden && scholarSnapshotUnavailable) void refreshScholarSnapshot();
+    });
   }
   function syncVideos(slide = deck?.getCurrentSlide()) {
     document.querySelectorAll('#slides video').forEach(video => {
@@ -169,7 +193,9 @@
           const scholar = anchor('',data.scholar.url); scholar.className = 'scholar-stat';
           scholar.title = '打开 Google Scholar 个人主页（新窗口）';
           append(scholar,el('strong','',data.scholar.citations.toLocaleString('en-US')),append(el('span'),el('span','scholar-label','Google Scholar ↗'),el('span','scholar-caption','Citations · 总引用')));
-          copy.append(scholar);
+          const status = el('p','metric-date','本地记录 · 等待首次自动更新');
+          status.id = 'scholar-status'; status.setAttribute('role','status'); status.setAttribute('aria-live','polite');
+          copy.append(scholar, status);
         }
         copy.append(contacts());
         const background = append(el('div','profile-education'),el('p','eyebrow','EDUCATION'),el('h2','','教育背景'));
@@ -257,7 +283,9 @@
       document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d){const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close();}}));
       if(readMode){const id=decodeURIComponent(location.hash.replace(/^#\/?/,''));const initial=chapters.findIndex(c=>c.id===id);if(initial>=0)requestAnimationFrame(()=>go(initial));const syncReadingPosition=()=>{const sections=[...document.querySelectorAll('#slides>section')];const marker=Math.min(innerHeight*.25,180);const active=sections.findIndex(s=>{const r=s.getBoundingClientRect();return r.top<=marker&&r.bottom>marker;});if(active>=0)update(active);};document.addEventListener('scroll',syncReadingPosition,{passive:true});window.addEventListener('resize',syncReadingPosition);document.addEventListener('keydown',e=>{if(e.key.toLowerCase()==='s'&&!e.ctrlKey&&!e.metaKey&&!document.querySelector('dialog[open]')){e.preventDefault();showNotes();}});}
       $('status').hidden=true;document.querySelector('.toolbar').hidden=printMode;update(deck?deck.getIndices().h:current);window.interview={go,get current(){return current;},get chapters(){return chapters;},deck,readMode};
+      updateMetrics();
       void refreshMetrics();
+      if (!printMode) watchScholarSnapshot();
     } catch(error) {$('status').hidden=false;$('status').className='error';$('status').replaceChildren(el('h1','','内容暂时无法显示'),el('p','',error.message),el('p','','修正文件后刷新页面即可。'));console.error(error);}
   }
   start();

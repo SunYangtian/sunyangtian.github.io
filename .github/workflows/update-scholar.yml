@@ -1,0 +1,75 @@
+name: Update Scholar snapshot
+
+on:
+  schedule:
+    # Daily at 04:27 UTC (12:27 China time); GitHub may delay scheduled runs.
+    - cron: '27 4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: scholar-snapshot
+  cancel-in-progress: false
+
+jobs:
+  update:
+    if: github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+      DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate parser and page update behavior
+        run: |
+          python -B -m unittest discover -s interview/tests -p 'test_*.py' -v
+          node --test interview/tests/metrics.test.cjs
+      - name: Verify branch-based Pages publishing
+        # Fail before committing if this repository uses a different publishing contract.
+        shell: bash
+        run: |
+          set -euo pipefail
+          build_type=$(gh api "repos/$GITHUB_REPOSITORY/pages" --jq '.build_type')
+          source=$(gh api "repos/$GITHUB_REPOSITORY/pages" --jq '.source | .branch + ":" + .path')
+          if [[ "$build_type" != "legacy" || "$source" != "$DEFAULT_BRANCH:/" ]]; then
+            echo "::error::Expected Pages: Deploy from a branch, $DEFAULT_BRANCH / (root). Found $build_type, $source. Confirm Settings > Pages; custom Actions deployments need their own publishing integration."
+            exit 1
+          fi
+      - name: Fetch and save verified Scholar snapshot
+        run: python -B interview/scripts/update_scholar.py --timeout 25
+      - name: Commit only the snapshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -- interview/metrics.json
+          if ! git diff --cached --quiet; then
+            test "$(git diff --cached --name-only)" = "interview/metrics.json"
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m 'chore: refresh Scholar citation snapshot'
+            git push origin "HEAD:$DEFAULT_BRANCH"
+          fi
+      - name: Request Pages rebuild
+        # GITHUB_TOKEN pushes do not trigger Pages automatically. A rerun must request
+        # a build even when the validated snapshot has no diff after an earlier push.
+        run: |
+          gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds"
+          echo '### Scholar snapshot saved; Pages build requested' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Check the Pages build result and /interview/metrics.json before treating it as published.' >> "$GITHUB_STEP_SUMMARY"
+      - name: Report failure without concealing stale data
+        if: failure()
+        run: |
+          echo '### Scholar update or publication failed' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Fetch/parse failures leave the old snapshot and its success timestamp unchanged. A later push/build failure may leave a valid snapshot committed but not yet published. Review the failed step and rerun after fixing the cause.' >> "$GITHUB_STEP_SUMMARY"

@@ -18,6 +18,8 @@ from urllib.parse import parse_qs, urlencode, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 MAX_COUNT = 2**53 - 1
+BROWSER_USER_AGENT = ('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 '
+                      '(KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36')
 
 
 def profile_user(url):
@@ -117,7 +119,8 @@ def fetch_profile(url, timeout):
             '--max-redirs', '3', '--proto', '=https', '--proto-redir', '=https',
             '--connect-timeout', '10', '--max-time', str(timeout),
             '--max-filesize', '2097152', '--header', 'Accept: text/html',
-            '--user-agent', 'ScholarSnapshot/1.0 (public profile statistics)',
+            '--header', 'Accept-Language: en-US,en;q=0.9',
+            '--user-agent', BROWSER_USER_AGENT,
             '--output', str(body), '--write-out', '%{url_effective}', target,
         ]
         result = subprocess.run(command, capture_output=True, text=True, timeout=timeout + 5)

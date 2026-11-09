@@ -178,6 +178,9 @@ class UpdateTests(unittest.TestCase):
         def transport(command, **kwargs):
             self.assertIn('--max-time', command)
             self.assertEqual(command[command.index('--max-time') + 1], '5')
+            self.assertIn('--user-agent', command)
+            self.assertEqual(command[command.index('--user-agent') + 1], updater.BROWSER_USER_AGENT)
+            self.assertIn('Accept-Language: en-US,en;q=0.9', command)
             self.assertEqual(kwargs['timeout'], 10)
             Path(command[command.index('--output') + 1]).write_text(profile())
             return subprocess.CompletedProcess(command, 0, URL, '')
